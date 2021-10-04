@@ -47,7 +47,7 @@ public class ExchangeApiTest {
                 .readValue(mvcResultAsync.getResponse().getContentAsByteArray(), ResultDTO.class);
 
         Assertions.assertEquals("102.6000", resultDTO.getExchangeRateAmount().toString());
-        Assertions.assertEquals(4.13, resultDTO.getExchangeRate().doubleValue());
+        Assertions.assertEquals(5.13, resultDTO.getExchangeRate().doubleValue());
     }
 
 }
