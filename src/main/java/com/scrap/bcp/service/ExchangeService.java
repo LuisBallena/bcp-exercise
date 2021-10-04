@@ -11,6 +11,7 @@ import rx.Single;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,9 +35,10 @@ public class ExchangeService {
     }
 
     private ResultDTO getResultDTO(ExchangeRateDTO exchangeRateDTO) {
+        Date now = new Date();
         ResultDTO resultDTO = new ResultDTO();
         List<String> currencies = List.of(exchangeRateDTO.getSourceCurrency(), exchangeRateDTO.getTargetCurrency());
-        Optional<ExchangeRate> optional = exchangeRateRepository.getExchangeRateBySourceCurrencyInAndTargetCurrencyIn(currencies, currencies);
+        Optional<ExchangeRate> optional = exchangeRateRepository.findFirstByTradingDateBeforeAndSourceCurrencyInAndTargetCurrencyInOrderByTradingDateDesc(now, currencies, currencies);
         if (optional.isPresent()) {
 
             ExchangeRate exchangeRate = optional.get();
