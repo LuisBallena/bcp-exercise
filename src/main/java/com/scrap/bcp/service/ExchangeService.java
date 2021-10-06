@@ -1,12 +1,16 @@
 package com.scrap.bcp.service;
 
+import com.scrap.bcp.api.dto.CreateResultDTO;
 import com.scrap.bcp.api.dto.ResultDTO;
+import com.scrap.bcp.api.dto.input.CreateExchangeRateDTO;
 import com.scrap.bcp.api.dto.input.ExchangeRateDTO;
 import com.scrap.bcp.domain.entity.ExchangeRate;
 import com.scrap.bcp.repository.ExchangeRateRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import rx.Observable;
 import rx.Single;
 
 import java.math.BigDecimal;
@@ -34,6 +38,15 @@ public class ExchangeService {
         return Single.create(s -> s.onSuccess(getResultDTO(exchangeRateDTO)));
     }
 
+    @Transactional
+    public Single<CreateResultDTO> saveExchange(CreateExchangeRateDTO createExchangeRateDTO) {
+        return Single.create(s -> s.onSuccess(saveDatabase(createExchangeRateDTO)));
+    }
+
+    public Observable<List<ExchangeRate>> getExchangeRates() {
+        return Observable.just(exchangeRateRepository.findAll());
+    }
+
     private ResultDTO getResultDTO(ExchangeRateDTO exchangeRateDTO) {
         Date now = new Date();
         ResultDTO resultDTO = new ResultDTO();
@@ -54,6 +67,17 @@ public class ExchangeService {
             resultDTO.setExchangeRate(BigDecimal.valueOf(newExchangeRate).setScale(4, RoundingMode.HALF_UP).doubleValue());
         }
         return resultDTO;
+    }
+
+    private CreateResultDTO saveDatabase(CreateExchangeRateDTO createExchangeRateDTO) {
+        ExchangeRate exchangeRate = new ExchangeRate();
+        exchangeRate.setTradingDate(new Date());
+        exchangeRate.setSourceCurrency(createExchangeRateDTO.getSourceCurrency());
+        exchangeRate.setTargetCurrency(createExchangeRateDTO.getTargetCurrency());
+        exchangeRate.setValue(createExchangeRateDTO.getValue());
+        exchangeRate = exchangeRateRepository.save(exchangeRate);
+        return new CreateResultDTO(exchangeRate.getTradingDate(), exchangeRate.getSourceCurrency(),
+                exchangeRate.getTargetCurrency(), exchangeRate.getValue());
     }
 
 }

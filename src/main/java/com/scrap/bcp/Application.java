@@ -14,14 +14,33 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author Luis Alonso Ballena Garcia
  */
-@SpringBootApplication
+// @SpringBootApplication
 public class Application {
 
 
     public static void main(String args[]) {
-        SpringApplication.run(Application.class, args);
+
+        int list[] = new int[]{1, 21, 8, 13, 6, 15, 7, 15};
+        int impar[] = new int[list.length];
+        for (int i = 0; i < list.length; i++) {
+            for (int j = 0; j < list.length; j++) {
+                if (list[i] < list[j]) {
+                    int aux = list[i];
+                    list[i] = list[j];
+                    list[j] = aux;
+                }
+            }
+        }
+
+        for(int i=0; i<impar.length; i++){
+            if(list[i] % 2 != 0){
+                System.out.println(list[i]);
+            }
+        }
+
     }
 
+    /*
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
@@ -42,6 +61,6 @@ public class Application {
         localValidatorFactoryBean.getValidationPropertyMap().put("hibernate.validator.fail_fast", "true");
         localValidatorFactoryBean.setValidationMessageSource(messageSource);
         return localValidatorFactoryBean;
-    }
+    }*/
 
 }
